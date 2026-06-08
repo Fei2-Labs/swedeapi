@@ -156,6 +156,16 @@ SELECT
 - Docker 场景下需把宿主机 Socket 挂载到容器内同路径
 - 详细步骤见：`deploy/DATAMANAGEMENTD_CN.md`
 
+### Docker Build Cache
+
+The root `Dockerfile` and `deploy/Dockerfile` use Docker BuildKit cache mounts for pnpm, Go modules, and the Go build cache. Enable BuildKit in CI, Dokploy, or manual builds so repeated deployments can reuse dependency caches:
+
+```bash
+DOCKER_BUILDKIT=1 docker build -t sub2api:latest .
+```
+
+If BuildKit is disabled, Docker will reject the `RUN --mount=type=cache` syntax instead of falling back to the legacy builder.
+
 ### Commands
 
 For **local directory version** (docker-compose.local.yml):

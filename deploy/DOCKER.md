@@ -70,6 +70,16 @@ volumes:
 - `x.y` - Latest patch of minor version
 - `x` - Latest minor of major version
 
+## Build Cache
+
+The Dockerfiles use Docker BuildKit cache mounts for pnpm, Go modules, and the Go build cache. Enable BuildKit when building locally, in CI, or in Dokploy:
+
+```bash
+DOCKER_BUILDKIT=1 docker build -t sub2api:latest .
+```
+
+BuildKit is required for the `RUN --mount=type=cache` syntax.
+
 ## Links
 
 - [GitHub Repository](https://github.com/weishaw/sub2api)

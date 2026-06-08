@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # =============================================================================
 # Sub2API Multi-Stage Dockerfile
 # =============================================================================
@@ -25,7 +26,8 @@ RUN corepack enable && corepack prepare pnpm@9 --activate
 
 # Install dependencies first (better caching)
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=sub2api-pnpm-store,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile --store-dir /root/.local/share/pnpm/store
 
 # Copy frontend source and build
 COPY frontend/ ./
@@ -53,7 +55,8 @@ WORKDIR /app/backend
 
 # Copy go mod files first (better caching)
 COPY backend/go.mod backend/go.sum ./
-RUN go mod download
+RUN --mount=type=cache,id=sub2api-go-mod,target=/go/pkg/mod \
+    go mod download
 
 # Copy backend source first
 COPY backend/ ./
@@ -63,7 +66,9 @@ COPY --from=frontend-builder /app/backend/internal/web/dist ./internal/web/dist
 
 # Build the binary (BuildType=release for CI builds, embed frontend)
 # Version precedence: build arg VERSION > cmd/server/VERSION
-RUN VERSION_VALUE="${VERSION}" && \
+RUN --mount=type=cache,id=sub2api-go-mod,target=/go/pkg/mod \
+    --mount=type=cache,id=sub2api-go-build,target=/root/.cache/go-build \
+    VERSION_VALUE="${VERSION}" && \
     if [ -z "${VERSION_VALUE}" ]; then VERSION_VALUE="$(tr -d '\r\n' < ./cmd/server/VERSION)"; fi && \
     DATE_VALUE="${DATE:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}" && \
     CGO_ENABLED=0 GOOS=linux go build \
