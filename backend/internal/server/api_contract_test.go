@@ -832,9 +832,18 @@ func TestAPIContracts(t *testing.T) {
 						"table_page_size_options": [10, 20, 50, 100],
 					"min_claude_code_version": "",
 					"max_claude_code_version": "",
+					"min_codex_version": "",
+					"max_codex_version": "",
+					"codex_cli_only_blacklist": "",
+					"codex_cli_only_whitelist": "",
+					"codex_cli_only_allow_app_server_clients": false,
+					"codex_cli_only_engine_fingerprint_signals": "[{\"type\":\"header_prefix\",\"match\":[\"x-codex-\"],\"required\":true},{\"type\":\"header_exact\",\"match\":[\"session-id\",\"session_id\"],\"required\":false},{\"type\":\"header_exact\",\"match\":[\"thread-id\",\"thread_id\"],\"required\":false},{\"type\":\"body_path\",\"match\":[\"client_metadata.x-codex-window-id\",\"client_metadata.x-codex-installation-id\"],\"required\":false}]",
 					"allow_ungrouped_key_scheduling": false,
 					"backend_mode_enabled": false,
 					"enable_cch_signing": false,
+					"enable_claude_oauth_system_prompt_injection": true,
+					"claude_oauth_system_prompt": "",
+					"claude_oauth_system_prompt_blocks": "",
 					"enable_anthropic_cache_ttl_1h_injection": false,
 					"rewrite_message_cache_control": false,
 					"antigravity_user_agent_version": "",
@@ -847,7 +856,6 @@ func TestAPIContracts(t *testing.T) {
 					"payment_visible_method_wxpay_enabled": false,
 					"openai_advanced_scheduler_enabled": true,
 					"openai_codex_user_agent":           "",
-					"openai_allow_claude_code_codex_plugin": false,
 					"openai_fast_policy_settings": {
 						"rules": []
 					},
@@ -884,6 +892,8 @@ func TestAPIContracts(t *testing.T) {
 					"channel_monitor_default_interval_seconds": 60,
 					"available_channels_enabled": false,
 					"risk_control_enabled": false,
+					"cyber_session_block_enabled": false,
+					"cyber_session_block_ttl_seconds": 3600,
 					"affiliate_enabled": false,
 					"wechat_connect_enabled": false,
 					"wechat_connect_app_id": "",
@@ -1075,9 +1085,18 @@ func TestAPIContracts(t *testing.T) {
 					"enable_fingerprint_unification": true,
 					"enable_metadata_passthrough": false,
 					"enable_cch_signing": false,
+					"enable_claude_oauth_system_prompt_injection": true,
+					"claude_oauth_system_prompt": "",
+					"claude_oauth_system_prompt_blocks": "",
 					"enable_anthropic_cache_ttl_1h_injection": false,
 					"rewrite_message_cache_control": false,
 					"antigravity_user_agent_version": "",
+					"min_codex_version": "",
+					"max_codex_version": "",
+					"codex_cli_only_blacklist": "",
+					"codex_cli_only_whitelist": "",
+					"codex_cli_only_allow_app_server_clients": false,
+					"codex_cli_only_engine_fingerprint_signals": "[{\"type\":\"header_prefix\",\"match\":[\"x-codex-\"],\"required\":true},{\"type\":\"header_exact\",\"match\":[\"session-id\",\"session_id\"],\"required\":false},{\"type\":\"header_exact\",\"match\":[\"thread-id\",\"thread_id\"],\"required\":false},{\"type\":\"body_path\",\"match\":[\"client_metadata.x-codex-window-id\",\"client_metadata.x-codex-installation-id\"],\"required\":false}]",
 					"web_search_emulation_enabled": false,
 					"payment_visible_method_alipay_source": "",
 					"payment_visible_method_wxpay_source": "",
@@ -1085,7 +1104,6 @@ func TestAPIContracts(t *testing.T) {
 					"payment_visible_method_wxpay_enabled": false,
 					"openai_advanced_scheduler_enabled": false,
 					"openai_codex_user_agent":           "",
-					"openai_allow_claude_code_codex_plugin": false,
 					"openai_fast_policy_settings": {
 						"rules": []
 					},
@@ -1120,6 +1138,8 @@ func TestAPIContracts(t *testing.T) {
 					"channel_monitor_default_interval_seconds": 60,
 					"available_channels_enabled": false,
 					"risk_control_enabled": false,
+					"cyber_session_block_enabled": false,
+					"cyber_session_block_ttl_seconds": 3600,
 					"affiliate_enabled": false,
 					"wechat_connect_enabled": true,
 					"wechat_connect_app_id": "wx-open-config",
@@ -1675,6 +1695,10 @@ func (s *stubAccountRepo) ListActive(ctx context.Context) ([]service.Account, er
 	return nil, errors.New("not implemented")
 }
 
+func (s *stubAccountRepo) ListOAuthRefreshCandidates(ctx context.Context) ([]service.Account, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s *stubAccountRepo) ListByPlatform(ctx context.Context, platform string) ([]service.Account, error) {
 	return nil, errors.New("not implemented")
 }
@@ -1775,6 +1799,10 @@ func (s *stubAccountRepo) UpdateSessionWindow(ctx context.Context, id int64, sta
 	return errors.New("not implemented")
 }
 
+func (s *stubAccountRepo) UpdateSessionWindowEnd(ctx context.Context, id int64, end time.Time) error {
+	return errors.New("not implemented")
+}
+
 func (s *stubAccountRepo) UpdateExtra(ctx context.Context, id int64, updates map[string]any) error {
 	return errors.New("not implemented")
 }
@@ -1794,6 +1822,10 @@ func (s *stubAccountRepo) BulkUpdate(ctx context.Context, ids []int64, updates s
 
 func (s *stubAccountRepo) ListCRSAccountIDs(ctx context.Context) (map[string]int64, error) {
 	return nil, errors.New("not implemented")
+}
+
+func (s *stubAccountRepo) RevertProxyFallback(ctx context.Context, accountID int64) error {
+	return nil
 }
 
 type stubProxyRepo struct{}
@@ -1848,6 +1880,22 @@ func (stubProxyRepo) CountAccountsByProxyID(ctx context.Context, proxyID int64) 
 
 func (stubProxyRepo) ListAccountSummariesByProxyID(ctx context.Context, proxyID int64) ([]service.ProxyAccountSummary, error) {
 	return nil, errors.New("not implemented")
+}
+
+func (stubProxyRepo) SweepExpiredProxies(ctx context.Context, now time.Time) (int64, error) {
+	return 0, nil
+}
+
+func (stubProxyRepo) ListAllForFallback(ctx context.Context) ([]service.Proxy, error) {
+	return nil, nil
+}
+
+func (stubProxyRepo) CountExpired(ctx context.Context) (int64, error) {
+	return 0, nil
+}
+
+func (stubProxyRepo) CountExpiringSoon(ctx context.Context, now time.Time) (int64, error) {
+	return 0, nil
 }
 
 type stubRedeemCodeRepo struct {
