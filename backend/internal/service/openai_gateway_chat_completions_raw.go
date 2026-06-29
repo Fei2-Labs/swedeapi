@@ -258,8 +258,11 @@ func (s *OpenAIGatewayService) rawChatCompletionsURL(account *Account) (string, 
 	}
 
 	baseURL := account.GetOpenAIBaseURL()
-	if baseURL == "" {
+	if baseURL == "" && account.Platform != PlatformWindsurf {
 		baseURL = "https://api.openai.com"
+	}
+	if baseURL == "" {
+		return "", fmt.Errorf("base_url is required")
 	}
 	validatedURL, err := s.validateUpstreamBaseURL(baseURL)
 	if err != nil {

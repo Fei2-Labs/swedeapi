@@ -1329,8 +1329,11 @@ func (s *OpenAIGatewayService) SelectAccountForModelWithExclusions(ctx context.C
 // noAvailableOpenAISelectionError builds the standard "no account available" error
 // while preserving the compact-specific error when applicable.
 func normalizeOpenAICompatiblePlatform(platform string) string {
-	if platform == PlatformGrok {
+	switch platform {
+	case PlatformGrok:
 		return PlatformGrok
+	case PlatformWindsurf:
+		return PlatformWindsurf
 	}
 	return PlatformOpenAI
 }
@@ -2525,6 +2528,10 @@ func (s *OpenAIGatewayService) Forward(ctx context.Context, c *gin.Context, acco
 	if account.Platform == PlatformGrok {
 		_ = promptCacheKey
 		return s.forwardGrokResponses(ctx, c, account, body, originalModel, reqStream, startTime)
+	}
+
+	if account.Platform == PlatformWindsurf {
+		return s.forwardResponsesViaRawChatCompletions(ctx, c, account, body)
 	}
 
 	if account.Type == AccountTypeAPIKey && !openai_compat.ShouldUseResponsesAPI(account.Extra) {

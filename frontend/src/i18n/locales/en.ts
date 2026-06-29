@@ -97,7 +97,8 @@ export default {
       gemini: 'Gemini',
       antigravity: 'Antigravity',
       kiro: 'Kiro',
-      grok: 'Grok'
+      grok: 'Grok',
+      windsurf: 'Windsurf'
     },
     // CTA section
     cta: {
@@ -1882,6 +1883,7 @@ export default {
         usageAntigravity: 'Usage (Antigravity)',
         usageKiro: 'Usage (Kiro)',
         usageGrok: 'Usage (Grok)',
+        usageWindsurf: 'Usage (Windsurf)',
         concurrency: 'Concurrency',
         status: 'Status',
         lastActive: 'Last Active',
@@ -2225,6 +2227,7 @@ export default {
         antigravity: 'Antigravity',
         kiro: 'Kiro',
         grok: 'Grok',
+        windsurf: 'Windsurf',
       },
       deleteConfirm:
         "Are you sure you want to delete '{name}'? All associated API keys will no longer belong to any group.",
@@ -3149,6 +3152,7 @@ export default {
         gemini: 'Gemini',
         antigravity: 'Antigravity',
         kiro: 'Kiro',
+        windsurf: 'Windsurf',
       },
       types: {
         oauth: 'OAuth',
@@ -3537,6 +3541,12 @@ export default {
       grok: {
         baseUrlHint: 'Grok OAuth accounts forward to the official xAI API base URL.',
         apiKeyHint: 'Grok subscription support uses OAuth refresh tokens; API keys are out of scope for this account type.'
+      },
+      windsurf: {
+        relayType: 'WindsurfAPI relay',
+        relayHint: 'Use the root URL of your WindsurfAPI deployment, for example http://host:3003.',
+        baseUrlHint: 'WindsurfAPI root URL, for example http://host:3003',
+        apiKeyHint: 'WindsurfAPI API_KEY'
       },
       anthropic: {
         apiKeyPassthrough: 'Auto passthrough (auth only)',

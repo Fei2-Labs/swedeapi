@@ -3240,6 +3240,7 @@ const platformOptions = computed(() => [
   { value: "antigravity", label: "Antigravity" },
   { value: "kiro", label: "Kiro" },
   { value: "grok", label: "Grok" },
+  { value: "windsurf", label: "Windsurf" },
 ]);
 
 const platformFilterOptions = computed(() => [
@@ -3250,6 +3251,7 @@ const platformFilterOptions = computed(() => [
   { value: "antigravity", label: "Antigravity" },
   { value: "kiro", label: "Kiro" },
   { value: "grok", label: "Grok" },
+  { value: "windsurf", label: "Windsurf" },
 ]);
 
 const editStatusOptions = computed(() => [

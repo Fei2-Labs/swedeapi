@@ -97,7 +97,8 @@ export default {
       gemini: 'Gemini',
       antigravity: 'Antigravity',
       kiro: 'Kiro',
-      grok: 'Grok'
+      grok: 'Grok',
+      windsurf: 'Windsurf'
     },
     // CTA 区块
     cta: {
@@ -1903,6 +1904,7 @@ export default {
         usageAntigravity: '用量 (Antigravity)',
         usageKiro: '用量 (Kiro)',
         usageGrok: '用量 (Grok)',
+        usageWindsurf: '用量 (Windsurf)',
         concurrency: '并发数',
         status: '状态',
         lastActive: '最后活跃时间',
@@ -2253,6 +2255,7 @@ export default {
         antigravity: 'Antigravity',
         kiro: 'Kiro',
         grok: 'Grok',
+        windsurf: 'Windsurf',
       },
       saving: '保存中...',
       noGroups: '暂无分组',
@@ -3338,6 +3341,7 @@ export default {
         antigravity: 'Antigravity',
         kiro: 'Kiro',
         grok: 'Grok',
+        windsurf: 'Windsurf',
       },
       types: {
         oauth: 'OAuth',
@@ -3719,6 +3723,12 @@ export default {
       grok: {
         baseUrlHint: 'Grok OAuth 账号会转发到官方 xAI API Base URL。',
         apiKeyHint: 'Grok 订阅支持使用 OAuth refresh token；API Key 账号不在本次范围内。'
+      },
+      windsurf: {
+        relayType: 'WindsurfAPI 中转',
+        relayHint: '填写 WindsurfAPI 部署的根地址，例如 http://host:3003。',
+        baseUrlHint: 'WindsurfAPI 根地址，例如 http://host:3003',
+        apiKeyHint: 'WindsurfAPI API_KEY'
       },
       anthropic: {
         apiKeyPassthrough: '自动透传（仅替换认证）',

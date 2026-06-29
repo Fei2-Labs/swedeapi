@@ -33,14 +33,19 @@ func RegisterGatewayRoutes(
 
 	isOpenAIResponsesCompatibleGatewayPlatform := func(c *gin.Context) bool {
 		switch getGroupPlatform(c) {
-		case service.PlatformOpenAI, service.PlatformGrok:
+		case service.PlatformOpenAI, service.PlatformGrok, service.PlatformWindsurf:
 			return true
 		default:
 			return false
 		}
 	}
 	isOpenAIGatewayPlatform := func(c *gin.Context) bool {
-		return getGroupPlatform(c) == service.PlatformOpenAI
+		switch getGroupPlatform(c) {
+		case service.PlatformOpenAI, service.PlatformWindsurf:
+			return true
+		default:
+			return false
+		}
 	}
 	rejectGrokUnsupportedEndpoint := func(c *gin.Context, endpoint string) {
 		service.MarkOpsClientBusinessLimited(c, service.OpsClientBusinessLimitedReasonLocalFeatureGate)

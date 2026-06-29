@@ -16,6 +16,7 @@ import (
 
 	"github.com/Wei-Shaw/sub2api/internal/config"
 	"github.com/Wei-Shaw/sub2api/internal/domain"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/windsurf"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/xai"
 )
 
@@ -208,12 +209,16 @@ func (a *Account) IsGrok() bool {
 	return a.Platform == PlatformGrok
 }
 
+func (a *Account) IsWindsurf() bool {
+	return a.Platform == PlatformWindsurf
+}
+
 func (a *Account) IsGrokOAuth() bool {
 	return a.IsGrok() && a.Type == AccountTypeOAuth
 }
 
 func (a *Account) IsOpenAICompatible() bool {
-	return a != nil && (a.Platform == PlatformOpenAI || a.Platform == PlatformGrok)
+	return a != nil && (a.Platform == PlatformOpenAI || a.Platform == PlatformGrok || a.Platform == PlatformWindsurf)
 }
 
 func (a *Account) GeminiOAuthType() string {
@@ -538,6 +543,9 @@ func (a *Account) resolveModelMapping(rawMapping map[string]any) map[string]stri
 		if a.Platform == domain.PlatformGrok {
 			return xai.DefaultModelMapping()
 		}
+		if a.Platform == domain.PlatformWindsurf {
+			return windsurf.DefaultModelMapping()
+		}
 		// Bedrock 默认映射由 forwardBedrock 统一处理（需配合 region prefix 调整）
 		return nil
 	}
@@ -547,6 +555,9 @@ func (a *Account) resolveModelMapping(rawMapping map[string]any) map[string]stri
 		}
 		if a.Platform == domain.PlatformGrok {
 			return xai.DefaultModelMapping()
+		}
+		if a.Platform == domain.PlatformWindsurf {
+			return windsurf.DefaultModelMapping()
 		}
 		return nil
 	}
@@ -573,6 +584,9 @@ func (a *Account) resolveModelMapping(rawMapping map[string]any) map[string]stri
 	}
 	if a.Platform == domain.PlatformGrok {
 		return xai.DefaultModelMapping()
+	}
+	if a.Platform == domain.PlatformWindsurf {
+		return windsurf.DefaultModelMapping()
 	}
 	return nil
 }
@@ -1136,7 +1150,7 @@ func (a *Account) IsOpenAIApiKey() bool {
 }
 
 func (a *Account) GetOpenAIBaseURL() string {
-	if !a.IsOpenAI() {
+	if !a.IsOpenAI() && !a.IsWindsurf() {
 		return ""
 	}
 	if a.Type == AccountTypeAPIKey {
@@ -1144,6 +1158,9 @@ func (a *Account) GetOpenAIBaseURL() string {
 		if baseURL != "" {
 			return baseURL
 		}
+	}
+	if a.IsWindsurf() {
+		return ""
 	}
 	return "https://api.openai.com"
 }
@@ -1195,7 +1212,7 @@ func (a *Account) GetOpenAIIDToken() string {
 }
 
 func (a *Account) GetOpenAIApiKey() string {
-	if !a.IsOpenAIApiKey() {
+	if !a.IsOpenAIApiKey() && !(a.IsWindsurf() && a.Type == AccountTypeAPIKey) {
 		return ""
 	}
 	return a.GetCredential("api_key")
@@ -1268,6 +1285,9 @@ func (a *Account) SupportsOpenAIEndpointCapability(capability OpenAIEndpointCapa
 		return false
 	}
 	if a.IsGrok() {
+		return capability == OpenAIEndpointCapabilityChatCompletions
+	}
+	if a.IsWindsurf() {
 		return capability == OpenAIEndpointCapabilityChatCompletions
 	}
 	switch capability {

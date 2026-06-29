@@ -113,7 +113,8 @@ const platformOptions = computed(() => [
   { value: 'gemini', label: 'Gemini' },
   { value: 'antigravity', label: 'Antigravity' },
   { value: 'kiro', label: 'Kiro' },
-  { value: 'grok', label: 'Grok' }
+  { value: 'grok', label: 'Grok' },
+  { value: 'windsurf', label: 'Windsurf' }
 ])
 
 const timeRangeOptions = computed(() => [

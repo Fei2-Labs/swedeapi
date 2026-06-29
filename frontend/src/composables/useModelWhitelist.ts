@@ -169,6 +169,23 @@ const xaiModels = [
   'grok-4.20-non-reasoning'
 ]
 
+// WindsurfAPI
+const windsurfModels = [
+  'claude-sonnet-4.6',
+  'claude-opus-4.6',
+  'claude-opus-4.6-thinking',
+  'gpt-5',
+  'gemini-2.5-flash',
+  'grok',
+  'qwen',
+  'kimi-k2',
+  'glm',
+  'claude-sonnet',
+  'claude-opus',
+  'claude-opus-thinking',
+  'gemini-flash'
+]
+
 // Cohere
 const cohereModels = [
   'command-a-03-2025',
@@ -313,6 +330,13 @@ const grokPresetMappings = [
   { label: '4.20 Non Reasoning', from: 'grok-4.20-non-reasoning', to: 'grok-4.20-0309-non-reasoning', color: 'bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-400' }
 ]
 
+const windsurfPresetMappings = [
+  { label: 'Sonnet', from: 'claude-sonnet', to: 'claude-sonnet-4.6', color: 'bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-900/30 dark:text-sky-400' },
+  { label: 'Opus', from: 'claude-opus', to: 'claude-opus-4.6', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200 dark:bg-teal-900/30 dark:text-teal-400' },
+  { label: 'Opus Thinking', from: 'claude-opus-thinking', to: 'claude-opus-4.6-thinking', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400' },
+  { label: 'Gemini Flash', from: 'gemini-flash', to: 'gemini-2.5-flash', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400' }
+]
+
 // Antigravity 预设映射（支持通配符）
 const antigravityPresetMappings = [
   // Claude 通配符映射
@@ -442,6 +466,7 @@ export function getModelsByPlatform(platform: string): string[] {
     case 'meta': return metaModels
     case 'xai':
     case 'grok': return xaiModels
+    case 'windsurf': return windsurfModels
     case 'cohere': return cohereModels
     case 'yi': return yiModels
     case 'moonshot': return moonshotModels
@@ -460,6 +485,7 @@ export function getPresetMappingsByPlatform(platform: string) {
   if (platform === 'openai') return openaiPresetMappings
   if (platform === 'gemini') return geminiPresetMappings
   if (platform === 'grok' || platform === 'xai') return grokPresetMappings
+  if (platform === 'windsurf') return windsurfPresetMappings
   if (platform === 'antigravity') return antigravityPresetMappings
   if (platform === 'kiro') return kiroPresetMappings
   if (platform === 'bedrock') return bedrockPresetMappings

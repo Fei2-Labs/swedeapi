@@ -173,6 +173,19 @@
             <PlatformIcon platform="grok" size="sm" />
             Grok
           </button>
+          <button
+            type="button"
+            @click="form.platform = 'windsurf'"
+            :class="[
+              'flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 py-2.5 text-xs font-medium transition-all sm:gap-2 sm:px-4 sm:text-sm',
+              form.platform === 'windsurf'
+                ? 'bg-white text-sky-700 shadow-sm dark:bg-dark-600 dark:text-sky-300'
+                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
+            ]"
+          >
+            <PlatformIcon platform="windsurf" size="sm" />
+            Windsurf
+          </button>
         </div>
       </div>
 
@@ -397,6 +410,41 @@
         </div>
         <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
           {{ t('admin.accounts.oauth.grok.oauthOnlyHint') }}
+        </p>
+      </div>
+
+      <!-- Account Type Selection (WindsurfAPI relay - API Key only) -->
+      <div v-if="form.platform === 'windsurf'">
+        <label class="input-label">{{ t('admin.accounts.accountType') }}</label>
+        <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2" data-tour="account-form-type">
+          <button
+            type="button"
+            @click="accountCategory = 'apikey'"
+            :class="[
+              'flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all',
+              accountCategory === 'apikey'
+                ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
+                : 'border-gray-200 hover:border-sky-300 dark:border-dark-600 dark:hover:border-sky-700'
+            ]"
+          >
+            <div
+              :class="[
+                'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                accountCategory === 'apikey'
+                  ? 'bg-sky-600 text-white'
+                  : 'bg-gray-100 text-gray-500 dark:bg-dark-600 dark:text-gray-400'
+              ]"
+            >
+              <PlatformIcon platform="windsurf" size="sm" />
+            </div>
+            <div>
+              <span class="block text-sm font-medium text-gray-900 dark:text-white">API Key</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('admin.accounts.windsurf.relayType') }}</span>
+            </div>
+          </button>
+        </div>
+        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          {{ t('admin.accounts.windsurf.relayHint') }}
         </p>
       </div>
 
@@ -3887,6 +3935,7 @@ const baseUrlHint = computed(() => {
   if (form.platform === 'openai') return t('admin.accounts.openai.baseUrlHint')
   if (form.platform === 'gemini') return t('admin.accounts.gemini.baseUrlHint')
   if (form.platform === 'grok') return t('admin.accounts.grok.baseUrlHint')
+  if (form.platform === 'windsurf') return t('admin.accounts.windsurf.baseUrlHint')
   return t('admin.accounts.baseUrlHint')
 })
 
@@ -3895,6 +3944,7 @@ const apiKeyHint = computed(() => {
   if (form.platform === 'gemini') return t('admin.accounts.gemini.apiKeyHint')
   if (form.platform === 'kiro') return t('admin.accounts.kiro.apiKeyHint')
   if (form.platform === 'grok') return t('admin.accounts.grok.apiKeyHint')
+  if (form.platform === 'windsurf') return t('admin.accounts.windsurf.apiKeyHint')
   return t('admin.accounts.apiKeyHint')
 })
 
@@ -4487,6 +4537,8 @@ watch(
           ? 'https://generativelanguage.googleapis.com'
           : newPlatform === 'kiro'
             ? ''
+            : newPlatform === 'windsurf'
+              ? ''
             : newPlatform === 'grok'
               ? 'https://api.x.ai/v1'
               : 'https://api.anthropic.com'
@@ -4521,6 +4573,13 @@ watch(
     }
     if (newPlatform === 'grok') {
       accountCategory.value = 'oauth-based'
+      addMethod.value = 'oauth'
+      modelRestrictionMode.value = 'mapping'
+      form.concurrency = 1
+      form.load_factor = null
+    }
+    if (newPlatform === 'windsurf') {
+      accountCategory.value = 'apikey'
       addMethod.value = 'oauth'
       modelRestrictionMode.value = 'mapping'
       form.concurrency = 1
@@ -5463,6 +5522,10 @@ const handleSubmit = async () => {
     appStore.showError(t('admin.accounts.pleaseEnterApiKey'))
     return
   }
+  if (form.platform === 'windsurf' && !apiKeyBaseUrl.value.trim()) {
+    appStore.showError(t('admin.accounts.upstream.pleaseEnterBaseUrl'))
+    return
+  }
 
   // Determine default base URL based on platform
   const defaultBaseUrl =
@@ -5470,7 +5533,9 @@ const handleSubmit = async () => {
       ? 'https://api.openai.com'
       : form.platform === 'gemini'
         ? 'https://generativelanguage.googleapis.com'
-        : 'https://api.anthropic.com'
+        : form.platform === 'windsurf'
+          ? ''
+          : 'https://api.anthropic.com'
 
   // Build credentials with optional model mapping
   const credentials: Record<string, unknown> = {
@@ -5651,6 +5716,14 @@ const createAccountAndFinish = async (
     if (!credentials.base_url) {
       credentials.base_url = apiKeyBaseUrl.value.trim() || 'https://api.x.ai/v1'
     }
+    const modelMapping = buildModelMappingObject(modelRestrictionMode.value, allowedModels.value, modelMappings.value)
+    if (modelMapping) {
+      credentials.model_mapping = modelMapping
+    } else {
+      delete credentials.model_mapping
+    }
+  }
+  if (platform === 'windsurf') {
     const modelMapping = buildModelMappingObject(modelRestrictionMode.value, allowedModels.value, modelMappings.value)
     if (modelMapping) {
       credentials.model_mapping = modelMapping

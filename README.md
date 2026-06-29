@@ -698,6 +698,22 @@ xAI quota is passive. Sub2API does not invent subscription quota values; it reco
 
 ---
 
+## WindsurfAPI Relay Support
+
+Sub2API can route OpenAI-compatible gateway traffic to an external [WindsurfAPI](https://github.com/dwgx/WindsurfAPI) deployment.
+
+### Configuration
+
+- Platform name: `windsurf`
+- Account type: API Key
+- `credentials.base_url`: the root URL of the WindsurfAPI service, for example `http://host:3003`
+- `credentials.api_key`: the WindsurfAPI `API_KEY`
+- Supported public gateway targets: `/v1/messages`, `/v1/chat/completions`, and `/v1/responses`
+
+WindsurfAPI itself owns the Windsurf account pool, local Language Server bridge, rate limits, and failover. Sub2API treats it as an OpenAI-compatible upstream relay and requires an explicit `base_url`; it does not fall back to `https://api.openai.com` for `windsurf` accounts.
+
+---
+
 ## Antigravity Support
 
 Sub2API supports [Antigravity](https://antigravity.so/) accounts. After authorization, dedicated endpoints are available for Claude and Gemini models.
