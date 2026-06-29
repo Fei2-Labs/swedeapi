@@ -7,10 +7,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGroupRequestValidationAcceptsKiroPlatform(t *testing.T) {
-	createReq := CreateGroupRequest{Name: "kiro-default", Platform: "kiro"}
-	require.NoError(t, binding.Validator.ValidateStruct(createReq))
+func TestGroupRequestValidationAcceptsSupportedPlatforms(t *testing.T) {
+	platforms := []string{
+		"anthropic",
+		"openai",
+		"gemini",
+		"antigravity",
+		"kiro",
+		"grok",
+		"windsurf",
+	}
 
-	updateReq := UpdateGroupRequest{Platform: "kiro"}
-	require.NoError(t, binding.Validator.ValidateStruct(updateReq))
+	for _, platform := range platforms {
+		createReq := CreateGroupRequest{Name: platform + "-default", Platform: platform}
+		require.NoError(t, binding.Validator.ValidateStruct(createReq))
+
+		updateReq := UpdateGroupRequest{Platform: platform}
+		require.NoError(t, binding.Validator.ValidateStruct(updateReq))
+	}
 }
