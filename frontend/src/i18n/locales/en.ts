@@ -3543,10 +3543,10 @@ export default {
         apiKeyHint: 'Grok subscription support uses OAuth refresh tokens; API keys are out of scope for this account type.'
       },
       windsurf: {
-        relayType: 'WindsurfAPI relay',
-        relayHint: 'Use the root URL of your WindsurfAPI deployment, for example http://host:3003.',
-        baseUrlHint: 'WindsurfAPI root URL, for example http://host:3003',
-        apiKeyHint: 'WindsurfAPI API_KEY'
+        nativeType: 'Native account',
+        nativeTypeHint: 'Import a Windsurf token or sign in with email and password',
+        nativeHint: 'Sub2API now stores native Windsurf credentials directly. Relay base URLs are no longer used here.',
+        apiKeyHint: 'Native Windsurf accounts are created from an imported token or a password login session.'
       },
       anthropic: {
         apiKeyPassthrough: 'Auto passthrough (auth only)',
@@ -3920,6 +3920,21 @@ export default {
           failedToExchangeCode: 'Failed to exchange Grok authorization code',
           failedToValidateRT: 'Failed to validate Grok refresh token',
           oauthOnlyHint: 'Initial Grok support is OAuth subscription-backed Responses API text and reasoning traffic only.'
+        },
+        windsurf: {
+          title: 'Windsurf Native Account',
+          description: 'Choose a native Windsurf sign-in method to create the account directly in Sub2API.',
+          methodLabel: 'Sign-in Method',
+          tokenTitle: 'Import token',
+          tokenSubtitle: 'Paste the token from windsurf.com/show-auth-token',
+          tokenLabel: 'Windsurf token',
+          tokenPlaceholder: 'Paste the token shown at https://windsurf.com/show-auth-token',
+          tokenHint: 'The token will be exchanged for a native Windsurf API key and stored on the account.',
+          passwordTitle: 'Email + password',
+          passwordSubtitle: 'Sign in with a Windsurf account that supports password login',
+          emailPlaceholder: 'name@example.com',
+          passwordPlaceholder: 'Enter your Windsurf password',
+          passwordHint: 'Google/GitHub Windsurf sign-in is not wired in this flow yet.'
         },
         // Gemini specific
 	        gemini: {

@@ -3725,10 +3725,10 @@ export default {
         apiKeyHint: 'Grok 订阅支持使用 OAuth refresh token；API Key 账号不在本次范围内。'
       },
       windsurf: {
-        relayType: 'WindsurfAPI 中转',
-        relayHint: '填写 WindsurfAPI 部署的根地址，例如 http://host:3003。',
-        baseUrlHint: 'WindsurfAPI 根地址，例如 http://host:3003',
-        apiKeyHint: 'WindsurfAPI API_KEY'
+        nativeType: '原生账号',
+        nativeTypeHint: '导入 Windsurf token，或使用邮箱密码登录',
+        nativeHint: 'Sub2API 现在直接保存原生 Windsurf 凭据，这里不再使用中转 base URL。',
+        apiKeyHint: '原生 Windsurf 账号通过导入 token 或密码登录会话创建。'
       },
       anthropic: {
         apiKeyPassthrough: '自动透传（仅替换认证）',
@@ -4091,6 +4091,21 @@ export default {
           failedToExchangeCode: 'Grok 授权码兑换失败',
           failedToValidateRT: '验证 Grok refresh token 失败',
           oauthOnlyHint: '首版 Grok 支持仅包含 OAuth 订阅的 Responses API 文本/推理转发。'
+        },
+        windsurf: {
+          title: 'Windsurf 原生账号',
+          description: '选择一种原生 Windsurf 登录方式，直接在 Sub2API 中创建账号。',
+          methodLabel: '登录方式',
+          tokenTitle: '导入 token',
+          tokenSubtitle: '粘贴 windsurf.com/show-auth-token 提供的 token',
+          tokenLabel: 'Windsurf token',
+          tokenPlaceholder: '粘贴 https://windsurf.com/show-auth-token 页面显示的 token',
+          tokenHint: '系统会将该 token 兑换成原生 Windsurf API Key，并保存到账号中。',
+          passwordTitle: '邮箱 + 密码',
+          passwordSubtitle: '使用支持密码登录的 Windsurf 账号直接登录',
+          emailPlaceholder: 'name@example.com',
+          passwordPlaceholder: '输入您的 Windsurf 密码',
+          passwordHint: '当前流程暂未接入 Google/GitHub 的 Windsurf 登录。'
         },
         // Gemini specific
         gemini: {

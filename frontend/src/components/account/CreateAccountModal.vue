@@ -413,16 +413,16 @@
         </p>
       </div>
 
-      <!-- Account Type Selection (WindsurfAPI relay - API Key only) -->
+      <!-- Account Type Selection (Windsurf native account) -->
       <div v-if="form.platform === 'windsurf'">
         <label class="input-label">{{ t('admin.accounts.accountType') }}</label>
         <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2" data-tour="account-form-type">
           <button
             type="button"
-            @click="accountCategory = 'apikey'"
+            @click="accountCategory = 'oauth-based'"
             :class="[
               'flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all',
-              accountCategory === 'apikey'
+              accountCategory === 'oauth-based'
                 ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
                 : 'border-gray-200 hover:border-sky-300 dark:border-dark-600 dark:hover:border-sky-700'
             ]"
@@ -430,7 +430,7 @@
             <div
               :class="[
                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
-                accountCategory === 'apikey'
+                accountCategory === 'oauth-based'
                   ? 'bg-sky-600 text-white'
                   : 'bg-gray-100 text-gray-500 dark:bg-dark-600 dark:text-gray-400'
               ]"
@@ -438,13 +438,13 @@
               <PlatformIcon platform="windsurf" size="sm" />
             </div>
             <div>
-              <span class="block text-sm font-medium text-gray-900 dark:text-white">API Key</span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('admin.accounts.windsurf.relayType') }}</span>
+              <span class="block text-sm font-medium text-gray-900 dark:text-white">{{ t('admin.accounts.windsurf.nativeType') }}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('admin.accounts.windsurf.nativeTypeHint') }}</span>
             </div>
           </button>
         </div>
         <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          {{ t('admin.accounts.windsurf.relayHint') }}
+          {{ t('admin.accounts.windsurf.nativeHint') }}
         </p>
       </div>
 
@@ -3464,7 +3464,112 @@
 
     <!-- Step 2: OAuth Authorization -->
     <div v-else class="space-y-5">
-      <div v-if="isKiroImportMode" class="space-y-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
+      <div v-if="isWindsurfFlow" class="space-y-4">
+        <div class="rounded-lg border border-sky-200 bg-sky-50 p-4 dark:border-sky-700 dark:bg-sky-900/20">
+          <h4 class="mb-2 font-semibold text-sky-900 dark:text-sky-200">{{ t('admin.accounts.oauth.windsurf.title') }}</h4>
+          <p class="text-sm text-sky-700 dark:text-sky-300">{{ t('admin.accounts.oauth.windsurf.description') }}</p>
+        </div>
+
+        <div>
+          <label class="input-label">{{ t('admin.accounts.oauth.windsurf.methodLabel') }}</label>
+          <div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              @click="windsurfAuthMethod = 'token'"
+              :class="[
+                'flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all',
+                windsurfAuthMethod === 'token'
+                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
+                  : 'border-gray-200 hover:border-sky-300 dark:border-dark-600 dark:hover:border-sky-700'
+              ]"
+            >
+              <div
+                :class="[
+                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                  windsurfAuthMethod === 'token'
+                    ? 'bg-sky-600 text-white'
+                    : 'bg-gray-100 text-gray-500 dark:bg-dark-600 dark:text-gray-400'
+                ]"
+              >
+                <Icon name="key" size="sm" />
+              </div>
+              <div>
+                <span class="block text-sm font-medium text-gray-900 dark:text-white">{{ t('admin.accounts.oauth.windsurf.tokenTitle') }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('admin.accounts.oauth.windsurf.tokenSubtitle') }}</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              @click="windsurfAuthMethod = 'password'"
+              :class="[
+                'flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all',
+                windsurfAuthMethod === 'password'
+                  ? 'border-sky-500 bg-sky-50 dark:bg-sky-900/20'
+                  : 'border-gray-200 hover:border-sky-300 dark:border-dark-600 dark:hover:border-sky-700'
+              ]"
+            >
+              <div
+                :class="[
+                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                  windsurfAuthMethod === 'password'
+                    ? 'bg-sky-600 text-white'
+                    : 'bg-gray-100 text-gray-500 dark:bg-dark-600 dark:text-gray-400'
+                ]"
+              >
+                <Icon name="user" size="sm" />
+              </div>
+              <div>
+                <span class="block text-sm font-medium text-gray-900 dark:text-white">{{ t('admin.accounts.oauth.windsurf.passwordTitle') }}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('admin.accounts.oauth.windsurf.passwordSubtitle') }}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div v-if="windsurfAuthMethod === 'token'" class="rounded-lg border border-sky-200 bg-white p-4 dark:border-sky-800/40 dark:bg-dark-700/40">
+          <label class="input-label">{{ t('admin.accounts.oauth.windsurf.tokenLabel') }}</label>
+          <textarea
+            v-model="windsurfTokenInput"
+            rows="4"
+            class="input font-mono text-sm"
+            :placeholder="t('admin.accounts.oauth.windsurf.tokenPlaceholder')"
+            spellcheck="false"
+          ></textarea>
+          <p class="input-hint">{{ t('admin.accounts.oauth.windsurf.tokenHint') }}</p>
+        </div>
+
+        <div v-else class="rounded-lg border border-sky-200 bg-white p-4 dark:border-sky-800/40 dark:bg-dark-700/40">
+          <div class="space-y-4">
+            <div>
+              <label class="input-label">{{ t('common.email') }}</label>
+              <input
+                v-model="windsurfEmail"
+                type="email"
+                class="input"
+                :placeholder="t('admin.accounts.oauth.windsurf.emailPlaceholder')"
+                autocomplete="username"
+              />
+            </div>
+            <div>
+              <label class="input-label">{{ t('common.password') }}</label>
+              <input
+                v-model="windsurfPassword"
+                type="password"
+                class="input"
+                :placeholder="t('admin.accounts.oauth.windsurf.passwordPlaceholder')"
+                autocomplete="current-password"
+              />
+              <p class="input-hint">{{ t('admin.accounts.oauth.windsurf.passwordHint') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="windsurfAuth.error.value" class="rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-700 dark:bg-red-900/30">
+          <p class="whitespace-pre-line text-sm text-red-600 dark:text-red-400">{{ windsurfAuth.error.value }}</p>
+        </div>
+      </div>
+      <div v-else-if="isKiroImportMode" class="space-y-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
         <!-- Provider 选择:决定字段显隐与必填、示例 -->
         <div>
           <label class="input-label">{{ t('admin.accounts.oauth.kiro.importProviderLabel') }}</label>
@@ -3578,7 +3683,16 @@
           {{ t('common.back') }}
         </button>
         <button
-          v-if="isKiroImportMode"
+          v-if="isWindsurfFlow"
+          type="button"
+          :disabled="windsurfAuth.loading.value || (windsurfAuthMethod === 'token' ? !windsurfTokenInput.trim() : !windsurfEmail.trim() || !windsurfPassword.trim())"
+          class="btn btn-primary"
+          @click="handleWindsurfAuth"
+        >
+          {{ windsurfAuth.loading.value ? t('admin.accounts.creating') : t('common.create') }}
+        </button>
+        <button
+          v-else-if="isKiroImportMode"
           type="button"
           :disabled="currentOAuthLoading || !kiroTokenJson.trim()"
           class="btn btn-primary"
@@ -3881,6 +3995,7 @@ import { useGeminiOAuth } from '@/composables/useGeminiOAuth'
 import { useAntigravityOAuth } from '@/composables/useAntigravityOAuth'
 import { useKiroOAuth } from '@/composables/useKiroOAuth'
 import { useGrokOAuth } from '@/composables/useGrokOAuth'
+import { useWindsurfAuth } from '@/composables/useWindsurfAuth'
 import type {
   Proxy,
   AdminGroup,
@@ -3949,6 +4064,7 @@ const oauthStepTitle = computed(() => {
       : t('admin.accounts.oauth.kiro.title')
   }
   if (form.platform === 'grok') return t('admin.accounts.oauth.grok.title')
+  if (form.platform === 'windsurf') return t('admin.accounts.oauth.windsurf.title')
   return t('admin.accounts.oauth.title')
 })
 
@@ -3957,7 +4073,6 @@ const baseUrlHint = computed(() => {
   if (form.platform === 'openai') return t('admin.accounts.openai.baseUrlHint')
   if (form.platform === 'gemini') return t('admin.accounts.gemini.baseUrlHint')
   if (form.platform === 'grok') return t('admin.accounts.grok.baseUrlHint')
-  if (form.platform === 'windsurf') return t('admin.accounts.windsurf.baseUrlHint')
   return t('admin.accounts.baseUrlHint')
 })
 
@@ -3966,7 +4081,6 @@ const apiKeyHint = computed(() => {
   if (form.platform === 'gemini') return t('admin.accounts.gemini.apiKeyHint')
   if (form.platform === 'kiro') return t('admin.accounts.kiro.apiKeyHint')
   if (form.platform === 'grok') return t('admin.accounts.grok.apiKeyHint')
-  if (form.platform === 'windsurf') return t('admin.accounts.windsurf.apiKeyHint')
   return t('admin.accounts.apiKeyHint')
 })
 
@@ -3991,6 +4105,7 @@ const geminiOAuth = useGeminiOAuth() // For Gemini OAuth
 const antigravityOAuth = useAntigravityOAuth() // For Antigravity OAuth
 const kiroOAuth = useKiroOAuth() // For Kiro OAuth / IDC
 const grokOAuth = useGrokOAuth() // For Grok OAuth
+const windsurfAuth = useWindsurfAuth()
 
 // Computed: current OAuth state for template binding
 const currentAuthUrl = computed(() => {
@@ -4049,6 +4164,10 @@ interface TempUnschedRuleForm {
 const step = ref(1)
 const submitting = ref(false)
 const accountCategory = ref<'oauth-based' | 'apikey' | 'apikey-relay' | 'bedrock' | 'service_account'>('oauth-based') // UI selection for account category
+const windsurfAuthMethod = ref<'token' | 'password'>('token')
+const windsurfTokenInput = ref('')
+const windsurfEmail = ref('')
+const windsurfPassword = ref('')
 
 // Kiro 优先级默认值:普通账号 1(高优先级);外部中转账号 100(低优先级,仅作兜底)。
 const KIRO_DEFAULT_PRIORITY = 1
@@ -4464,8 +4583,12 @@ const isOAuthFlow = computed(() => {
 })
 
 const isKiroImportMode = computed(() => form.platform === 'kiro' && kiroAccountType.value === 'import')
+const isWindsurfFlow = computed(() => form.platform === 'windsurf' && step.value === 2)
 
 const isManualInputMethod = computed(() => {
+  if (form.platform === 'windsurf') {
+    return false
+  }
   return oauthFlowRef.value?.inputMethod === 'manual'
 })
 
@@ -4613,9 +4736,13 @@ watch(
       form.load_factor = null
     }
     if (newPlatform === 'windsurf') {
-      accountCategory.value = 'apikey'
+      accountCategory.value = 'oauth-based'
       addMethod.value = 'oauth'
       modelRestrictionMode.value = 'mapping'
+      windsurfAuthMethod.value = 'token'
+      windsurfTokenInput.value = ''
+      windsurfEmail.value = ''
+      windsurfPassword.value = ''
       form.concurrency = 1
       form.load_factor = null
     }
@@ -4661,6 +4788,7 @@ watch(
     antigravityOAuth.resetState()
     kiroOAuth.resetState()
     grokOAuth.resetState()
+    windsurfAuth.resetState()
   }
 )
 
@@ -5145,6 +5273,11 @@ const resetForm = () => {
   antigravityOAuth.resetState()
   kiroOAuth.resetState()
   grokOAuth.resetState()
+  windsurfAuth.resetState()
+  windsurfAuthMethod.value = 'token'
+  windsurfTokenInput.value = ''
+  windsurfEmail.value = ''
+  windsurfPassword.value = ''
   oauthFlowRef.value?.reset()
   antigravityMixedChannelConfirmed.value = false
   clearMixedChannelDialog()
@@ -5557,10 +5690,6 @@ const handleSubmit = async () => {
     appStore.showError(t('admin.accounts.pleaseEnterApiKey'))
     return
   }
-  if (form.platform === 'windsurf' && !apiKeyBaseUrl.value.trim()) {
-    appStore.showError(t('admin.accounts.upstream.pleaseEnterBaseUrl'))
-    return
-  }
 
   // Determine default base URL based on platform
   const defaultBaseUrl =
@@ -5574,8 +5703,11 @@ const handleSubmit = async () => {
 
   // Build credentials with optional model mapping
   const credentials: Record<string, unknown> = {
-    base_url: apiKeyBaseUrl.value.trim() || defaultBaseUrl,
     api_key: apiKeyValue.value.trim()
+  }
+  const resolvedBaseUrl = apiKeyBaseUrl.value.trim() || defaultBaseUrl
+  if (resolvedBaseUrl) {
+    credentials.base_url = resolvedBaseUrl
   }
   if (form.platform === 'gemini') {
     credentials.tier_id = geminiTierAIStudio.value
@@ -5636,6 +5768,7 @@ const goBackToBasicInfo = () => {
   antigravityOAuth.resetState()
   kiroOAuth.resetState()
   grokOAuth.resetState()
+  windsurfAuth.resetState()
   oauthFlowRef.value?.reset()
 }
 
@@ -5683,6 +5816,37 @@ const handleValidateRefreshToken = (rt: string) => {
 
 const handleValidateSessionToken = (_sessionToken: string) => {
   // Session token validation removed
+}
+
+const handleWindsurfAuth = async () => {
+  if (!form.name.trim()) {
+    appStore.showError(t('admin.accounts.pleaseEnterAccountName'))
+    return
+  }
+
+  try {
+    let tokenInfo = null
+    if (windsurfAuthMethod.value === 'token') {
+      tokenInfo = await windsurfAuth.importToken(windsurfTokenInput.value, form.proxy_id)
+    } else {
+      tokenInfo = await windsurfAuth.loginWithPassword({
+        email: windsurfEmail.value,
+        password: windsurfPassword.value,
+        proxyId: form.proxy_id
+      })
+    }
+
+    if (!tokenInfo) {
+      return
+    }
+
+    const credentials = windsurfAuth.buildCredentials(tokenInfo)
+    await createAccountAndFinish('windsurf', 'apikey', credentials)
+  } catch (error: any) {
+    const message = error.response?.data?.detail || t('admin.accounts.oauth.authFailed')
+    windsurfAuth.error.value = message
+    appStore.showError(message)
+  }
 }
 
 const formatDateTimeLocal = formatDateTimeLocalInput

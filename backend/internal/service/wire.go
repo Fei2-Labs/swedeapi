@@ -588,6 +588,7 @@ var ProviderSet = wire.NewSet(
 	ProvideOpenAIOAuthService,
 	NewGrokOAuthService,
 	NewGeminiOAuthService,
+	NewWindsurfAuthService,
 	NewGeminiQuotaService,
 	NewCompositeTokenCacheInvalidator,
 	wire.Bind(new(TokenCacheInvalidator), new(*CompositeTokenCacheInvalidator)),

@@ -698,19 +698,18 @@ xAI quota is passive. Sub2API does not invent subscription quota values; it reco
 
 ---
 
-## WindsurfAPI Relay Support
+## Windsurf Native Account Support
 
-Sub2API can route OpenAI-compatible gateway traffic to an external [WindsurfAPI](https://github.com/dwgx/WindsurfAPI) deployment.
+Sub2API can store and proxy native Windsurf accounts directly.
 
 ### Configuration
 
 - Platform name: `windsurf`
-- Account type: API Key
-- `credentials.base_url`: the root URL of the WindsurfAPI service, for example `http://host:3003`
-- `credentials.api_key`: the WindsurfAPI `API_KEY`
+- Account creation flow: use the admin UI to import a token from `https://windsurf.com/show-auth-token` or sign in with Windsurf email/password
+- Stored credential shape: `credentials.api_key` plus optional `credentials.session_token`, `credentials.email`, and `credentials.api_server_url`
 - Supported public gateway targets: `/v1/messages`, `/v1/chat/completions`, and `/v1/responses`
 
-WindsurfAPI itself owns the Windsurf account pool, local Language Server bridge, rate limits, and failover. Sub2API treats it as an OpenAI-compatible upstream relay and requires an explicit `base_url`; it does not fall back to `https://api.openai.com` for `windsurf` accounts.
+Native Windsurf accounts are persisted as Windsurf API-key-style credentials for Sub2API’s existing OpenAI-compatible runtime path. The old Windsurf relay/base-url setup is no longer used in this account flow.
 
 ---
 

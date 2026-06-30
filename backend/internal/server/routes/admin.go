@@ -47,6 +47,9 @@ func RegisterAdminRoutes(
 		// Antigravity OAuth
 		registerAntigravityOAuthRoutes(admin, h)
 
+		// Windsurf native auth
+		registerWindsurfOAuthRoutes(admin, h)
+
 		// Kiro OAuth / IDC
 		registerKiroOAuthRoutes(admin, h)
 		// Grok OAuth
@@ -390,6 +393,14 @@ func registerAntigravityOAuthRoutes(admin *gin.RouterGroup, h *handler.Handlers)
 		antigravity.POST("/oauth/auth-url", h.Admin.AntigravityOAuth.GenerateAuthURL)
 		antigravity.POST("/oauth/exchange-code", h.Admin.AntigravityOAuth.ExchangeCode)
 		antigravity.POST("/oauth/refresh-token", h.Admin.AntigravityOAuth.RefreshToken)
+	}
+}
+
+func registerWindsurfOAuthRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
+	windsurf := admin.Group("/windsurf")
+	{
+		windsurf.POST("/oauth/import-token", h.Admin.WindsurfOAuth.ImportToken)
+		windsurf.POST("/oauth/password-login", h.Admin.WindsurfOAuth.LoginWithPassword)
 	}
 }
 
