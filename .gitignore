@@ -1,5 +1,7 @@
 docs/claude-relay-service/
 .codex
+.cursor/
+.trellis/
 
 # ===================
 # Go 后端
